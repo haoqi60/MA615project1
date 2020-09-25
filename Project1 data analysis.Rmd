@@ -1,0 +1,306 @@
+---
+title: "Buoy project"
+output: pdf_document
+author: "Haoqi Wang"
+date: "9/25/2020"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1.1 Overview
+
+I read 20-years of data NDBC Station 44013, which is a platform to provide quality observations in the marine environment in a safe and sustainable manner to support the understanding of and predictions to changes in weather, climate, oceans and coast.. By downloading data from 44013, I collected the data from 1984 to 2019, which is included many variables,like air temperature, water temperature and so forth. You may know the average global temperature has increased in recorded history. And experts see the trend is accelerating.So around this topic, I did a project and report to indicate whether the global warming exists or not.
+
+1.2 Outline
+
+The outline of this report is as follows. Firstly, I display the process of data cleaning. Next, I show the data analysis via a statistical model. Lastly, we interpret our model and discuss the conclusions.
+
+2.1 import data
+
+I read 20-year of data from NDBC Station 44013. There are 20 files in my local file folder. According to look through the data, I found some of data columns' names are different. In order to make data more clear, I delete the "TIDE" column for 2000, and delete the "mm" column, which is the minutes.
+```{r }
+library(data.table)
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+library(citation)
+#import data
+#2000
+Buoy2000<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file00.txt",sep="",header = T)
+Buoy2000$TIDE<-0
+Buoy2000$mm<-0
+colnames(Buoy2000)[1]<-"X.YY"
+colnames(Buoy2000)[5]<-"WDIR"
+colnames(Buoy2000)[12]<-"PRES"
+
+#2001
+Buoy2001<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file01.txt",sep="",header = T)
+Buoy2001$mm<-0
+colnames(Buoy2001)[1]<-"X.YY"
+colnames(Buoy2001)[5]<-"WDIR"
+colnames(Buoy2001)[12]<-"PRES"
+
+
+#2002
+Buoy2002<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file02.txt",sep="",header = T)
+Buoy2002$mm<-0
+colnames(Buoy2002)[1]<-"X.YY"
+colnames(Buoy2002)[5]<-"WDIR"
+colnames(Buoy2002)[12]<-"PRES"
+
+#2003
+Buoy2003<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file03.txt",sep="",header = T)
+Buoy2003$mm<-0
+colnames(Buoy2003)[1]<-"X.YY"
+colnames(Buoy2003)[5]<-"WDIR"
+colnames(Buoy2003)[12]<-"PRES"
+
+#2004
+Buoy2004<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file04.txt",sep="",header = T)
+Buoy2004$mm<-0
+colnames(Buoy2004)[1]<-"X.YY"
+colnames(Buoy2004)[5]<-"WDIR"
+colnames(Buoy2004)[12]<-"PRES"
+
+#2005
+Buoy2005<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file05.txt",sep="",header = T)
+mm2005<-Buoy2005$mm
+Buoy2005$mm<-NULL
+Buoy2005$mm<-mm2005
+colnames(Buoy2005)[1]<-"X.YY"
+colnames(Buoy2005)[5]<-"WDIR"
+colnames(Buoy2005)[12]<-"PRES"
+
+#2006
+Buoy2006<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file06.txt",sep="",header = T)
+mm2006<-Buoy2006$mm
+Buoy2006$mm<-NULL
+Buoy2006$mm<-mm2006
+colnames(Buoy2006)[1]<-"X.YY"
+colnames(Buoy2006)[5]<-"WDIR"
+colnames(Buoy2006)[12]<-"PRES"
+
+#2007
+Buoy2007<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file07.txt",sep="",header = T)
+mm2007<-Buoy2007$mm
+Buoy2007$mm<-NULL
+Buoy2007$mm<-mm2007
+Buoy2007 = Buoy2007[-c(1),]
+
+#2008
+Buoy2008<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file08.txt",sep="",header = T)
+mm2008<-Buoy2008$mm
+Buoy2008$mm<-NULL
+Buoy2008$mm<-mm2008
+Buoy2008 = Buoy2008[-c(1),]
+
+
+#2009
+Buoy2009<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file09.txt",sep="",header = T)
+mm2009<-Buoy2009$mm
+Buoy2009$mm<-NULL
+Buoy2009$mm<-mm2009
+Buoy2009 = Buoy2009[-c(1),]
+
+#2010
+Buoy2010<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file10.txt",sep="",header = T)
+mm2010<-Buoy2010$mm
+Buoy2010$mm<-NULL
+Buoy2010$mm<-mm2010
+Buoy2010 = Buoy2010[-c(1),]
+
+#2011
+Buoy2011<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file11.txt",sep="",header = T)
+mm2011<-Buoy2011$mm
+Buoy2011$mm<-NULL
+Buoy2011$mm<-mm2011
+Buoy2011 = Buoy2011[-c(1),]
+
+#2012
+Buoy2012<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file12.txt",sep="",header = T)
+mm2012<-Buoy2012$mm
+Buoy2012$mm<-NULL
+Buoy2012$mm<-mm2012
+Buoy2012 = Buoy2012[-c(1),]
+
+#2013
+Buoy2013<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file13.txt",sep="",header = T)
+mm2013<-Buoy2013$mm
+Buoy2013$mm<-NULL
+Buoy2013$mm<-mm2013
+Buoy2013 = Buoy2013[-c(1),]
+
+#2014
+Buoy2014<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file14.txt",sep="",header = T)
+mm2014<-Buoy2014$mm
+Buoy2014$mm<-NULL
+Buoy2014$mm<-mm2014
+Buoy2014 = Buoy2014[-c(1),]
+
+#2015
+Buoy2015<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file15.txt",sep="",header = T)
+mm2015<-Buoy2015$mm
+Buoy2015$mm<-NULL
+Buoy2015$mm<-mm2015
+Buoy2015 = Buoy2015[-c(1),]
+
+#2016
+Buoy2016<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file16.txt",sep="",header = T)
+mm2016<-Buoy2016$mm
+Buoy2016$mm<-NULL
+Buoy2016$mm<-mm2016
+Buoy2016 = Buoy2016[-c(1),]
+
+#2017
+Buoy2017<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file17.txt",sep="",header = T)
+mm2017<-Buoy2017$mm
+Buoy2017$mm<-NULL
+Buoy2017$mm<-mm2017
+Buoy2017 = Buoy2017[-c(1),]
+
+#2018
+Buoy2018<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file18.txt",sep="",header = T)
+mm2018<-Buoy2018$mm
+Buoy2018$mm<-NULL
+Buoy2018$mm<-mm2018
+Buoy2018 = Buoy2018[-c(1),]
+
+#2019
+Buoy2019<-read.csv("/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/view_text_file19.txt",sep="",header = T)
+mm2019<-Buoy2019$mm
+Buoy2019$mm<-NULL
+Buoy2019$mm<-mm2019
+Buoy2019 = Buoy2019[-c(1),]
+```
+2.2 clean data
+
+After importing data, I use fwrite() to combine 20-year data in a csv file. Then we have 18 variables in the data frame. However, there are some columns the values are 0, I delete these columns. Since the data in data frame are not numeric, I transfer the data type. And I combine the year, month, day and hour into one variable in order to use it conveniently by using make_datetime() function. Later, I use filter() to remove the outliers. 
+```{r}
+#Combine the 20 years data into one file
+
+Buoy<-rbind(Buoy2000,Buoy2001,Buoy2002,Buoy2003,Buoy2004,Buoy2005,Buoy2006,Buoy2007,Buoy2008,Buoy2009,Buoy2010,Buoy2011,Buoy2012,Buoy2013,Buoy2014,Buoy2015,Buoy2016,Buoy2017,Buoy2018,Buoy2019)
+
+
+#create a file that can store the new data in local
+fwrite(Buoy,"/Users/wanghaoqi/Desktop/2020 Fall/MA615/class3/MA615project1/Buoy.csv")
+
+#clean data
+Buoy[Buoy==99|Buoy==999|Buoy==9999]<-0
+Buoy<-Buoy[,-11]
+Buoy<-Buoy[,-15:-17]
+
+#combine year, month, day and hour into one variable
+a <- Buoy %>% select(X.YY, MM, DD, hh)
+a2 <- as.data.frame(lapply(a,as.numeric))
+D_date<- make_datetime(year=a2$X.YY, month=a2$MM, day=a2$DD, hour=a2$hh)
+Buoy$D_date <- D_date
+cols <- colnames(Buoy)
+new_cols <- c(cols[1], cols[length(cols)], cols[2:(length(cols) - 1)])
+Buoy5 <- Buoy[, new_cols]
+Buoy6 <- Buoy5[,c(-1,-3:-5)]
+
+#remove the outliers
+Buoy6[,2:11]<-lapply(Buoy6[,2:11],as.numeric)
+Buoy6<-filter(Buoy6,DEWP!=999&ATMP<50&WTMP<50)
+```
+2.3 data analysis
+
+Firstly, due to the huge dataset, I decide to use the mean of every variable to check whether the global temperature gets warmer. So I use group_by() to divide the data by year, month and day, and calculate the mean of the variable.
+```{r  echo=FALSE}
+#divide the data by day
+Buoy2 <- Buoy6 %>% group_by(date(D_date)) %>% summarize(mean(WDIR),mean(WSPD),mean(GST),mean(WVHT),mean(DPD),mean(APD),mean(PRES),mean(ATMP),mean(WTMP),mean(DEWP))
+#divide the data by month
+Buoy3 <- Buoy6 %>% group_by(year(D_date),month(D_date)) %>% summarize(mean(WDIR),mean(WSPD),mean(GST),mean(WVHT),mean(DPD),mean(APD),mean(PRES),mean(ATMP),mean(WTMP),mean(DEWP))
+#divide the data by year
+Buoy4 <- Buoy6 %>% group_by(year(D_date)) %>% summarize(mean(WDIR),mean(WSPD),mean(GST),mean(WVHT),mean(DPD),mean(APD),mean(PRES),mean(ATMP),mean(WTMP),mean(DEWP))
+```
+Secondly, (1)I will display the trend of average air temperature yearly, monthly, and daily, (2)and I show the trend of average water temperature yearly, monthly, and daily.
+(1-1)In order to find the trend of average air temperature yearly, I use lm() function to find the linear regression and display the relationship by ggplot().
+```{r  echo=FALSE}
+#consider a linear regression of average air temperature yearly.
+fit1_data=data.frame(year=Buoy4$'year(D_date)',ATMP_year=Buoy4$'mean(ATMP)',data=Buoy4)
+fit1<-lm(ATMP_year~year,data = fit1_data)
+summary(fit1)
+ggplot(data = fit1_data,aes(year,ATMP_year)) +
+  geom_point() +
+  geom_smooth(method='lm',formula = 'y~x')
+```
+(1-2)In order to find the trend of average air temperature monthly, I use lm() function to find the linear regression and display the relationship by ggplot().
+```{r echo=FALSE}
+#consider a linear regression of average air temperature monthly.
+b <- Buoy3 %>% select(`year(D_date)`,`month(D_date)`)
+b2 <- as.data.frame(lapply(b,as.numeric))
+year_month=make_date(year = b$`year(D_date)`,month = b$`month(D_date)`)
+Buoy3$year_month<-year_month
+cols1 <- colnames(Buoy3)
+new_cols1 <- c(cols1[1], cols1[length(cols1)], cols1[2:(length(cols1) - 1)])
+Buoy3 <- Buoy3[, new_cols1]
+Buoy3 <- Buoy3[,c(-1,-3)]
+fit2_data=data.frame(month=Buoy3$`year_month`,ATMP_month=Buoy3$`mean(WTMP)`,data=Buoy3)
+fit2<-lm(ATMP_month~month,data = fit2_data)
+summary(fit2)
+ggplot(data = fit2_data,aes(month,ATMP_month)) +
+  geom_point() +
+  geom_smooth(method='lm',formula = 'y~x')
+```
+(1-3)In order to find the trend of average air temperature daily, I use lm() function to find the linear regression and display the relationship by ggplot().
+```{r  echo=FALSE}
+#consider a linear regression of average air temperature daily.
+fit3_data=data.frame(day=Buoy2$'date(D_date)',ATMP_day=Buoy2$'mean(ATMP)',data=Buoy2)
+fit3<-lm(ATMP_day~day,data = fit3_data)
+summary(fit3)
+ggplot(data = fit3_data,aes(day,ATMP_day)) +
+  geom_point() +
+  geom_smooth(method='lm',formula = 'y~x')
+```
+(2-1)In order to find the trend of average water temperature yearly, I use lm() function to find the linear regression and display the relationship by ggplot().
+```{r  echo=FALSE}
+#consider a linear regression of average water temperature yearly.
+fit4_data=data.frame(year=Buoy4$'year(D_date)',WTMP_year=Buoy4$'mean(WTMP)',data=Buoy4)
+fit4<-lm(WTMP_year~year,data = fit4_data)
+summary(fit4)
+ggplot(data = fit4_data,aes(year,WTMP_year)) +
+  geom_point() +
+  geom_smooth(method='lm',formula = 'y~x')
+```
+(2-2)In order to find the trend of average water temperature monthly, I use lm() function to find the linear regression and display the relationship by ggplot().
+```{r echo=FALSE}
+#consider a linear regression of average water temperature monthly.
+fit5_data=data.frame(month=Buoy3$'year_month',WTMP_month=Buoy3$'mean(WTMP)',data=Buoy3)
+fit5<-lm(WTMP_month~month,data = fit5_data)
+summary(fit5)
+ggplot(data = fit5_data,aes(month,WTMP_month)) +
+  geom_point() +
+  geom_smooth(method='lm',formula = 'y~x')
+```
+(2-3)In order to find the trend of average water temperature daily, I use lm() function to find the linear regression and display the relationship by ggplot().
+```{r  echo=FALSE}
+#consider a linear regression of average water temperature daily.
+fit6_data=data.frame(day=Buoy2$'date(D_date)',WTMP_day=Buoy2$'mean(WTMP)',data=Buoy2)
+fit6<-lm(WTMP_day~day,data = fit6_data)
+summary(fit6)
+ggplot(data = fit6_data,aes(day,WTMP_day)) +
+  geom_point() +
+  geom_smooth(method='lm',formula = 'y~x')
+```
+
+
+3 Conclusion
+
+To sum up, the trend of average water temperature(air temperature) yearly, monthly, and daily increase slowly from 2000 to 2020, which may indicate that the global warming exists.
+
+
+4 Curiosity
+
+For this project, I want to create a polar diagram that can not only show the changes of temperature among years, but also show the changes of temperature among months. And I think I need to consider whether the seasonal change can influence the temperature.
+
+5 Reference
+```{r echo=FALSE}
+package2zenodo("data.table")
+package2zenodo("lubridate")
+package2zenodo("dplyr")
+package2zenodo("ggplot2")
+package2zenodo("citation")
+```
